@@ -47,7 +47,7 @@ function displayProducts(product) {
 
   // CREATE LINK TAG
   let elemA = document.createElement("a");
-  elemA.href = "product.html"
+  elemA.href = `product.html?id=${product._id}`;
   linkLabel = document.createTextNode(product.name);
 
   elemA.appendChild(article);
