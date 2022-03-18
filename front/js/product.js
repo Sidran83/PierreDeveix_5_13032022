@@ -21,13 +21,32 @@ function fetchProduct(id) {
 
 
 function displayKanap(product) {
+  // DISPLAY IMAGE
   let img = document.createElement('img');
   img.src = product.imageUrl;
-  img.alt = document.createTextNode("Photographie d'un canapé");
+  img.setAttribute("alt", product.altTxt);
   document.querySelector('.item__img').appendChild(img);
 
-  document.getElementById('title').createTextNode(product.name)
+  // DISPLAY PRODUCT NAME
+  let title = document.createTextNode(product.name)
+  document.getElementById('title').appendChild(title);
 
+  // DISPLAY PRODUCT PRICE
+  let price = document.createTextNode(product.price)
+  document.getElementById('price').appendChild(price);
+
+  // DISPLAY PRODUCT DESCRIPTION
+  let description = document.createTextNode(product.description)
+  document.getElementById('description').appendChild(description);
+
+  // DISPLAY PRODUCT COLORS
+  for (let i = 0; i < product.colors.length; i++) {
+    let colorOption = document.createElement("option");
+    colorOption.setAttribute("value", product.colors[i]);
+    text = document.createTextNode(product.colors[i]);
+    colorOption.appendChild(text);
+    document.getElementById('colors').appendChild(colorOption);
+  }
 }
 
 fetchProduct(id);
