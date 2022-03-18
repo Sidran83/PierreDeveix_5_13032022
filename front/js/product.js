@@ -25,6 +25,9 @@ function displayKanap(product) {
   img.src = product.imageUrl;
   img.alt = document.createTextNode("Photographie d'un canapé");
   document.querySelector('.item__img').appendChild(img);
+
+  document.getElementById('title').createTextNode(product.name)
+
 }
 
 fetchProduct(id);
