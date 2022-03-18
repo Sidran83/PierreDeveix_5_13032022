@@ -14,4 +14,17 @@ function fetchProduct(id) {
       throw new Error("Network response failed");
     }
   })
+  .then(function(product) {
+    displayKanap(product);
+  })
 }
+
+
+function displayKanap(product) {
+  let img = document.createElement('img');
+  img.src = product.imageUrl;
+  img.alt = document.createTextNode("Photographie d'un canapé");
+  document.querySelector('.item__img').appendChild(img);
+}
+
+fetchProduct(id);
