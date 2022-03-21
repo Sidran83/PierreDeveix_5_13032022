@@ -20,7 +20,7 @@ function fetchProduct(id) {
     displayKanap(product);
 
     // GET THE COLOR CHOSEN BY USER
-    let color = localStorage.setItem("color",selectColor());
+    selectColor();
 
     // CONSOLE LOG THE COLOR CHOSEN
     displayColor(color);
@@ -40,7 +40,9 @@ function selectColor() {
   // SAVE THE SELECTED COLOR
   let elem = document.getElementById('colors');
   elem.addEventListener('change', function() {
-    return elem.value;
+
+    localStorage.setItem("color", elem.value);
+
   });
 }
 
