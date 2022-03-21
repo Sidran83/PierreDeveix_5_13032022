@@ -15,9 +15,14 @@ function fetchProduct(id) {
     }
   })
   .then(function(product) {
+
+    // DISPLAY THE PRODUC DATAS
     displayKanap(product);
 
+    // GET THE COLOR CHOSEN BY USER
     let color = localStorage.setItem("color",selectColor());
+
+    // CONSOLE LOG THE COLOR CHOSEN
     displayColor(color);
   })
 }
@@ -27,6 +32,7 @@ function displayColor(color) {
   let elem = document.getElementById('addToCart');
   elem.addEventListener('click', function() {
     console.log(color);
+    console.log(localStorage.getItem('color'));
   });
 }
 
@@ -34,7 +40,7 @@ function selectColor() {
   // SAVE THE SELECTED COLOR
   let elem = document.getElementById('colors');
   elem.addEventListener('change', function() {
-    elem.value;
+    return elem.value;
   });
 }
 
