@@ -16,9 +16,26 @@ function fetchProduct(id) {
   })
   .then(function(product) {
     displayKanap(product);
+
+    let color = localStorage.setItem("color",selectColor());
+    console.log(color);
   })
 }
 
+function displayColor(couleur) {
+  let elem = document.getElementById('addToCart');
+  elem.addEventListener('click', function() {
+    console.log(couleur);
+  });
+}
+
+function selectColor() {
+  // SAVE THE SELECTED COLOR
+  let elem = document.getElementById('colors');
+  elem.addEventListener('change', function() {
+    elem.value;
+  });
+}
 
 function displayKanap(product) {
   // DISPLAY IMAGE
