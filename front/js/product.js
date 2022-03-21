@@ -22,6 +22,7 @@ function fetchProduct(id) {
   })
 }
 
+
 function displayColor(couleur) {
   let elem = document.getElementById('addToCart');
   elem.addEventListener('click', function() {
