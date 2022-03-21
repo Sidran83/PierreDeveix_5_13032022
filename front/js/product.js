@@ -18,15 +18,15 @@ function fetchProduct(id) {
     displayKanap(product);
 
     let color = localStorage.setItem("color",selectColor());
-    console.log(color);
+    displayColor(color);
   })
 }
 
 
-function displayColor(couleur) {
+function displayColor(color) {
   let elem = document.getElementById('addToCart');
   elem.addEventListener('click', function() {
-    console.log(couleur);
+    console.log(color);
   });
 }
 
