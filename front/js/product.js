@@ -23,15 +23,15 @@ function fetchProduct(id) {
     selectColor();
 
     // CONSOLE LOG THE COLOR CHOSEN
-    displayColor(color);
+    displayColor();
   })
 }
 
 
-function displayColor(color) {
+function displayColor() {
   let elem = document.getElementById('addToCart');
   elem.addEventListener('click', function() {
-    console.log(color);
+
     console.log(localStorage.getItem('color'));
   });
 }
