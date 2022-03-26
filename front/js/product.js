@@ -1,7 +1,5 @@
 let params = new URL(document.location).searchParams;
 let id = params.get("id");
-console.log(id);
-
 
 function fetchProduct(id) {
   fetch("http://localhost:4000/api/products/" + id)
@@ -15,36 +13,70 @@ function fetchProduct(id) {
     }
   })
   .then(function(product) {
-
-    // DISPLAY THE PRODUC DATAS
     displayKanap(product);
 
-    // GET THE COLOR CHOSEN BY USER
-    selectColor();
+    let selectedProduct = {
+      id: product._id
+    }
 
-    // CONSOLE LOG THE COLOR CHOSEN
-    displayColor();
+    let selectedColor = selectColor(selectedProduct);
+    let selectedQuantity = selectQuantity(selectedProduct);
+
+    let addToCart = document.getElementById('addToCart');
+    addToCart.addEventListener("click", function (event) {
+      if (selectedProduct.quantity === undefined || selectedProduct.color === undefined) {
+        window.alert('Veuillez sélectionner tous les champs');
+      } else {
+        addProductToCart(event, selectedProduct);
+      }
+    });
   })
 }
 
+function addProductToCart(event, selectedProduct) {
+  event.preventDefault();
+  console.log(selectedProduct)
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  let ifExists = false;
 
-function displayColor() {
-  let elem = document.getElementById('addToCart');
-  elem.addEventListener('click', function() {
-
-    console.log(localStorage.getItem('color'));
-  });
+  for (i = 0; i < cart.length; i++) {
+    if (cart[i].id === selectedProduct.id) {
+      ifExists = true;
+      window.alert('ce produit est déjà dans votre panier');
+    }
+  }
+  if (ifExists === false) {
+    cart.push(selectedProduct);
+    localStorage.setItem('cart', JSON.stringify(cart));
+    toggleButton();
+  }
 }
 
-function selectColor() {
+function toggleButton() {
+  let addToCart = document.getElementById('addToCart');
+  addToCart.innerHTML = '<i class="fas fa-check"></i>Ajouté au panier !';
+  addToCart.style.backgroundColor = "#3DE087";
+  addToCart.style.borderColor = "#3DE087";
+  addToCart.style.color = "black";
+}
+
+function selectColor(selectedProduct) {
   // SAVE THE SELECTED COLOR
   let elem = document.getElementById('colors');
   elem.addEventListener('change', function() {
+    selectedProduct.color = elem.value;
+    return selectedProduct;
+  })
+};
 
-    localStorage.setItem("color", elem.value);
-
-  });
-}
+function selectQuantity(selectedProduct) {
+  // SAVE THE SELECTED COLOR
+  let elem = document.getElementById('quantity');
+  elem.addEventListener('input', function() {
+    selectedProduct.quantity = elem.value;
+    return selectedProduct;
+  })
+};
 
 function displayKanap(product) {
   // DISPLAY IMAGE
@@ -76,3 +108,4 @@ function displayKanap(product) {
 }
 
 fetchProduct(id);
+
