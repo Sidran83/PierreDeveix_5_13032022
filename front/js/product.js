@@ -16,7 +16,8 @@ function fetchProduct(id) {
     displayKanap(product);
 
     let selectedProduct = {
-      id: product._id
+      id: product._id,
+      price: product.price
     }
 
     let selectedColor = selectColor(selectedProduct);
@@ -35,7 +36,6 @@ function fetchProduct(id) {
 
 function addProductToCart(event, selectedProduct) {
   event.preventDefault();
-  console.log(selectedProduct)
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
   let ifExists = false;
 

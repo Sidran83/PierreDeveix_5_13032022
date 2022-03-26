@@ -10,7 +10,6 @@ function fetchProducts() {
       }
     })
     .then(function(products) {
-      console.log(products);
       for (let i = 0; i < products.length; i++) {
           displayProducts(products[i]);
         }
