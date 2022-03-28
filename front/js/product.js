@@ -17,7 +17,6 @@ function fetchProduct(id) {
 
     let selectedProduct = {
       id: product._id,
-      price: product.price
     }
 
     let selectedColor = selectColor(selectedProduct);
@@ -40,7 +39,7 @@ function addProductToCart(event, selectedProduct) {
   let ifExists = false;
 
   for (i = 0; i < cart.length; i++) {
-    if (cart[i].id === selectedProduct.id) {
+    if (cart[i].id === selectedProduct.id && cart[i].color === selectedProduct.color) {
       ifExists = true;
       window.alert('ce produit est déjà dans votre panier');
     }

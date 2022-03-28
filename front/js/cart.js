@@ -2,10 +2,37 @@ function displayCart() {
   let cart = JSON.parse(localStorage.getItem('cart'));
   for (let i = 0; i < cart.length; i++) {
     let selectedProduct = fetchProduct(cart[i]);
+    let getPrices = fetchPrices(cart[i], cart);
   }
   cartTotalPrice(cart);
 }
 
+function fetchPrices(cartItem, cart) {
+  fetch("http://localhost:4000/api/products/" + cartItem.id)
+  .then(function(response) {
+    if (response.ok) {
+      return response.json();
+    } else if (response.id === undefined) {
+      throw new Error("This product id does not exist");
+    } else {
+      throw new Error("Network response failed");
+    }
+  })
+  .then(function(product) {
+    let totalQuantity = 0;
+    let totalPrice = 0;
+
+    if (cart.length > 0) {
+      cart.forEach(cartItem => {
+
+        totalQuantity += parseInt(cartItem.quantity);
+        totalPrice = totalPrice + (product.price * cartItem.quantity);
+      });
+    }
+    document.getElementById('totalQuantity').innerHTML = totalQuantity;
+    document.getElementById('totalPrice').innerHTML = totalPrice;
+  })
+}
 
 
 function cartTotalPrice(cart) {
@@ -40,6 +67,22 @@ function fetchProduct(cartItem) {
     let quantity = cartItem.quantity;
     displayCartItems(product, color, quantity);
 
+    let changeQuantity = document.getElementById(`itemQuantityId_${product._id}`);
+    changeQuantity.addEventListener("input", function () {
+      let newQuantity = changeQuantity.value;
+      console.log(newQuantity);
+      let cart = JSON.parse(localStorage.getItem('cart'));
+      for (let i = 0; i < cart.length; i++) {
+        if (cart[i].id === cartItem.id) {
+          cart[i].quantity = newQuantity;
+          localStorage.setItem('cart', JSON.stringify(cart));
+          console.log(cart);
+
+          window.location.reload();
+        }
+      }
+    })
+
     let removeProduct = document.getElementById(`productId_${product._id}`);
     removeProduct.addEventListener("click", function () {
       let cart = JSON.parse(localStorage.getItem('cart'));
@@ -59,7 +102,9 @@ function displayCartItems(product, color, quantity) {
   // CREATE DIV TO DISPLAY SETTINGS
   // add quantity input
   let input = document.createElement('input');
+  input.id = `itemQuantityId_${product._id}`
   input.className = 'itemQuantity';
+
   input.setAttribute('name', 'itemQuantity');
   input.setAttribute('type', 'number');
   input.setAttribute('min', 1);
