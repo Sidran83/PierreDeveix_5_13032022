@@ -4,7 +4,48 @@ function displayCart() {
     let selectedProduct = fetchProduct(cart[i]);
     let getPrices = fetchPrices(cart[i], cart);
   }
-  cartTotalPrice(cart);
+  let order = document.getElementById('order');
+  order.addEventListener("click", checkOrderForm);
+}
+
+
+function checkOrderForm(event) {
+  event.preventDefault();
+  let contact = {
+    firstName: document.getElementById('firstName').value,
+    lastName: document.getElementById('lastName').value,
+    address: document.getElementById('address').value,
+    city: document.getElementById('city').value,
+    email: document.getElementById('email').value
+
+  }
+  const isFormValid = (
+    checkValidity(contact.firstName)
+    &&checkValidity(contact.lastName)
+    &&checkIfFilled(contact.address)
+    &&checkValidity(contact.city)
+    &&checkEmailValidity(contact.email)
+  )
+
+  if (isFormValid) {
+    let cart = JSON.parse(localStorage.getItem('cart'));
+    let products = [];
+    for (item of cart) {
+      products.push(item._id);
+  }
+}
+
+
+function checkIfFilled(value) {
+  return value !== "";
+}
+
+function checkEmailValidity(value) {
+  return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value);
+}
+
+function checkValidity(value) {
+  return (/^[A-Za-z]+$/).test(value);
 }
 
 function fetchPrices(cartItem, cart) {
@@ -32,23 +73,6 @@ function fetchPrices(cartItem, cart) {
     document.getElementById('totalQuantity').innerHTML = totalQuantity;
     document.getElementById('totalPrice').innerHTML = totalPrice;
   })
-}
-
-
-function cartTotalPrice(cart) {
-
-  let totalQuantity = 0;
-  let totalPrice = 0;
-
-  if (cart.length > 0) {
-    cart.forEach(cartItem => {
-
-      totalQuantity += parseInt(cartItem.quantity);
-      totalPrice = totalPrice + (cartItem.price * cartItem.quantity);
-    });
-  }
-  document.getElementById('totalQuantity').innerHTML = totalQuantity;
-  document.getElementById('totalPrice').innerHTML = totalPrice;
 }
 
 function fetchProduct(cartItem) {

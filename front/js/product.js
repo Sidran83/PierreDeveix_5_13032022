@@ -16,7 +16,7 @@ function fetchProduct(id) {
     displayKanap(product);
 
     let selectedProduct = {
-      id: product._id,
+      id: product._id
     }
 
     let selectedColor = selectColor(selectedProduct);
