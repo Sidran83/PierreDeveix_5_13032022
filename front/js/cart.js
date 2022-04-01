@@ -17,7 +17,6 @@ function checkOrderForm(event) {
     address: document.getElementById('address').value,
     city: document.getElementById('city').value,
     email: document.getElementById('email').value
-
   }
   const isFormValid = (
     checkValidity(contact.firstName)
@@ -32,6 +31,7 @@ function checkOrderForm(event) {
     let products = [];
     for (item of cart) {
       products.push(item._id);
+    }
   }
 }
 

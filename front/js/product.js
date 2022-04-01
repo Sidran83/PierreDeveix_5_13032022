@@ -24,7 +24,7 @@ function fetchProduct(id) {
 
     let addToCart = document.getElementById('addToCart');
     addToCart.addEventListener("click", function (event) {
-      if (selectedProduct.quantity === undefined || selectedProduct.color === undefined) {
+      if (isNaN(parseInt(selectedProduct.quantity)) || parseInt(selectedProduct.quantity) === 0 || selectedProduct.color === undefined || selectedProduct.color === ''){
         window.alert('Veuillez sélectionner tous les champs');
       } else {
         addProductToCart(event, selectedProduct);
@@ -38,25 +38,30 @@ function addProductToCart(event, selectedProduct) {
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
   let ifExists = false;
 
-  for (i = 0; i < cart.length; i++) {
-    if (cart[i].id === selectedProduct.id && cart[i].color === selectedProduct.color) {
-      ifExists = true;
-      window.alert('ce produit est déjà dans votre panier');
-    }
-  }
-  if (ifExists === false) {
+  if (cart.length === 0) {
     cart.push(selectedProduct);
     localStorage.setItem('cart', JSON.stringify(cart));
-    toggleButton();
-  }
-}
+    window.alert("Vous venez d'ajouter ce produit à votre panier.");
+  } else {
+    for (i = 0; i < cart.length; i++) {
+      if (cart[i].id === selectedProduct.id && cart[i].color === selectedProduct.color) {
+        cart[i].quantity = (parseInt(cart[i].quantity) + parseInt(selectedProduct.quantity)).toString();
+        cart.push(cart[i]);
+        cart.splice(i, 1);
 
-function toggleButton() {
-  let addToCart = document.getElementById('addToCart');
-  addToCart.innerHTML = '<i class="fas fa-check"></i>Ajouté au panier !';
-  addToCart.style.backgroundColor = "#3DE087";
-  addToCart.style.borderColor = "#3DE087";
-  addToCart.style.color = "black";
+        localStorage.setItem('cart', JSON.stringify(cart));
+
+        ifExists = true;
+        window.alert("Vous venez d'ajouter ce produit à votre panier.");
+
+      }
+    }
+    if (ifExists === false) {
+      cart.push(selectedProduct);
+      localStorage.setItem('cart', JSON.stringify(cart));
+      window.alert("Vous venez d'ajouter ce produit à votre panier.");
+    }
+  }
 }
 
 function selectColor(selectedProduct) {
@@ -107,4 +112,3 @@ function displayKanap(product) {
 }
 
 fetchProduct(id);
-
