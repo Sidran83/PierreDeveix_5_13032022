@@ -18,6 +18,7 @@ function checkOrderForm(event) {
     city: document.getElementById('city').value,
     email: document.getElementById('email').value
   }
+  let orderId = 1;
   const isFormValid = (
     checkValidity(contact.firstName)
     &&checkValidity(contact.lastName)
@@ -26,15 +27,64 @@ function checkOrderForm(event) {
     &&checkEmailValidity(contact.email)
   )
 
+  if (!checkValidity(contact.firstName)) {
+    let firstNameError = document.getElementById('firstNameErrorMsg')
+    let ErrorMsg = 'Veuillez remplir un prénom valide';
+    firstNameError.innerHTML = ErrorMsg;
+  }
+
+  if (!checkValidity(contact.lastName)) {
+    let lastNameError = document.getElementById('lastNameErrorMsg')
+    let ErrorMsg = 'Veuillez saisir un nom valide';
+    lastNameError.innerHTML = ErrorMsg;
+  }
+
+  if (!checkIfFilled(contact.address)) {
+    let addressError = document.getElementById('addressErrorMsg')
+    let ErrorMsg = 'Veuillez saisir une adresse valide';
+    addressError.innerHTML = ErrorMsg;
+  }
+
+  if (!checkValidity(contact.city)) {
+    let cityError = document.getElementById('cityErrorMsg')
+    let ErrorMsg = 'Veuillez saisir une ville valide';
+    cityError.innerHTML = ErrorMsg;
+  }
+
+  if (!checkEmailValidity(contact.email)) {
+    let emailError = document.getElementById('emailErrorMsg')
+    let ErrorMsg = 'Veuillez saisir une adresse mél valide';
+    emailError.innerHTML = ErrorMsg;
+  }
   if (isFormValid) {
     let cart = JSON.parse(localStorage.getItem('cart'));
     let products = [];
     for (item of cart) {
-      products.push(item._id);
+      products.push(`id: ${item.id}, color: ${item.color}, quantity: ${item.quantity}`);
     }
+    console.log(contact);
+    console.log(products);
+    console.log(orderId);
+
+    fetch('http://localhost:4000/api/products/order', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        contact: contact
+      })
+    })
+    .then(function(response) {
+      console.log(response);
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error("Network response failed");
+      }
+    })
   }
 }
-
 
 function checkIfFilled(value) {
   return value !== "";
@@ -45,7 +95,8 @@ function checkEmailValidity(value) {
 }
 
 function checkValidity(value) {
-  return (/^[A-Za-z]+$/).test(value);
+
+  return (/^[a-z ,.'-]+$/i).test(value);
 }
 
 function fetchPrices(cartItem, cart) {
@@ -89,35 +140,43 @@ function fetchProduct(cartItem) {
   .then(function(product) {
     let color = cartItem.color;
     let quantity = cartItem.quantity;
+    let id = cartItem.id
     displayCartItems(product, color, quantity);
 
-    let changeQuantity = document.getElementById(`itemQuantityId_${product._id}`);
-    changeQuantity.addEventListener("input", function () {
-      let newQuantity = changeQuantity.value;
-      console.log(newQuantity);
-      let cart = JSON.parse(localStorage.getItem('cart'));
-      for (let i = 0; i < cart.length; i++) {
-        if (cart[i].id === cartItem.id) {
-          cart[i].quantity = newQuantity;
-          localStorage.setItem('cart', JSON.stringify(cart));
-          console.log(cart);
+    let changeQuantity = document.getElementsByClassName('itemQuantity');
 
-          window.location.reload();
-        }
-      }
-    })
+    for (i = 0; i < changeQuantity.length; i++) {
+      changeQuantity[i].addEventListener('input', event => {
+        let dataColor = event.currentTarget.parentNode.parentNode.parentNode.parentNode.dataset.color;
+        let newQuantity = event.target.value;
+        let cart = JSON.parse(localStorage.getItem('cart'));
+        for (let i = 0; i < cart.length; i++) {
+          if (cart[i].id === cartItem.id && cart[i].color === dataColor) {
+            cart[i].quantity = newQuantity;
+            localStorage.setItem('cart', JSON.stringify(cart));
+            console.log(cart);
 
-    let removeProduct = document.getElementById(`productId_${product._id}`);
-    removeProduct.addEventListener("click", function () {
-      let cart = JSON.parse(localStorage.getItem('cart'));
-      for (let i = 0; i < cart.length; i++) {
-        if (cart[i].id === cartItem.id) {
-          cart.splice(i, 1);
-          localStorage.setItem('cart', JSON.stringify(cart));
-          window.location.reload();
+            window.location.reload();
+          }
         }
-      }
-    })
+      })
+    }
+
+    let removeProduct = document.getElementsByClassName('deleteItem');
+    for (i = 0; i < removeProduct.length; i++) {
+      removeProduct[i].addEventListener('click', event => {
+        let dataId = event.currentTarget.parentNode.parentNode.parentNode.parentNode.dataset.id;
+        let dataColor = event.currentTarget.parentNode.parentNode.parentNode.parentNode.dataset.color;
+        let cart = JSON.parse(localStorage.getItem('cart'));
+        for (let i = 0; i < cart.length; i++) {
+          if (cart[i].id === cartItem.id && cart[i].color === dataColor) {
+            cart.splice(i, 1);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            window.location.reload();
+          }
+        }
+      })
+    }
   })
 }
 
@@ -126,7 +185,7 @@ function displayCartItems(product, color, quantity) {
   // CREATE DIV TO DISPLAY SETTINGS
   // add quantity input
   let input = document.createElement('input');
-  input.id = `itemQuantityId_${product._id}`
+  // input.id = `itemQuantityId_${product._id}`
   input.className = 'itemQuantity';
 
   input.setAttribute('name', 'itemQuantity');
@@ -199,7 +258,7 @@ function displayCartItems(product, color, quantity) {
   // CREATE ARTICLE TAG WITH DATAS
   let article = document.createElement('article');
   article.className = 'cart__item';
-  article.setAttribute('data-id', 1);
+  article.setAttribute('data-id', product._id);
   article.setAttribute('data-color', color);
   article.appendChild(cartItemImg);
   article.appendChild(cartItemContent);
