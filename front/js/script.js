@@ -1,6 +1,6 @@
 let urlApi = new URL ("http://localhost:4000/api/products");
 
-
+// call API
 function fetchProducts() {
 
   fetch(urlApi)
@@ -19,6 +19,7 @@ function fetchProducts() {
     });
 }
 
+// display products
 function displayProducts(product) {
 
   // CREATE DESCRIPTION

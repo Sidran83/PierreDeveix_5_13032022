@@ -1,3 +1,4 @@
+// retrieve the cart to display all selected products
 function displayCart() {
   let cart = JSON.parse(localStorage.getItem('cart'));
   for (let i = 0; i < cart.length; i++) {
@@ -8,124 +9,7 @@ function displayCart() {
   order.addEventListener("click", checkOrderForm);
 }
 
-
-function checkOrderForm(event) {
-  event.preventDefault();
-  let contact = {
-    firstName: document.getElementById('firstName').value,
-    lastName: document.getElementById('lastName').value,
-    address: document.getElementById('address').value,
-    city: document.getElementById('city').value,
-    email: document.getElementById('email').value
-  }
-  let orderId = 1;
-  const isFormValid = (
-    checkValidity(contact.firstName)
-    &&checkValidity(contact.lastName)
-    &&checkIfFilled(contact.address)
-    &&checkValidity(contact.city)
-    &&checkEmailValidity(contact.email)
-  )
-
-  if (!checkValidity(contact.firstName)) {
-    let firstNameError = document.getElementById('firstNameErrorMsg')
-    let ErrorMsg = 'Veuillez remplir un prénom valide';
-    firstNameError.innerHTML = ErrorMsg;
-  }
-
-  if (!checkValidity(contact.lastName)) {
-    let lastNameError = document.getElementById('lastNameErrorMsg')
-    let ErrorMsg = 'Veuillez saisir un nom valide';
-    lastNameError.innerHTML = ErrorMsg;
-  }
-
-  if (!checkIfFilled(contact.address)) {
-    let addressError = document.getElementById('addressErrorMsg')
-    let ErrorMsg = 'Veuillez saisir une adresse valide';
-    addressError.innerHTML = ErrorMsg;
-  }
-
-  if (!checkValidity(contact.city)) {
-    let cityError = document.getElementById('cityErrorMsg')
-    let ErrorMsg = 'Veuillez saisir une ville valide';
-    cityError.innerHTML = ErrorMsg;
-  }
-
-  if (!checkEmailValidity(contact.email)) {
-    let emailError = document.getElementById('emailErrorMsg')
-    let ErrorMsg = 'Veuillez saisir une adresse mél valide';
-    emailError.innerHTML = ErrorMsg;
-  }
-  if (isFormValid) {
-    let cart = JSON.parse(localStorage.getItem('cart'));
-    let products = [];
-    for (item of cart) {
-      products.push(`id: ${item.id}, color: ${item.color}, quantity: ${item.quantity}`);
-    }
-    console.log(contact);
-    console.log(products);
-    console.log(orderId);
-
-    fetch('http://localhost:4000/api/products/order', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        contact: contact
-      })
-    })
-    .then(function(response) {
-      console.log(response);
-      if (response.ok) {
-        return response.json();
-      } else {
-        throw new Error("Network response failed");
-      }
-    })
-  }
-}
-
-function checkIfFilled(value) {
-  return value !== "";
-}
-
-function checkEmailValidity(value) {
-  return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value);
-}
-
-function checkValidity(value) {
-
-  return (/^[a-z ,.'-]+$/i).test(value);
-}
-
-function fetchPrices(cartItem, cart) {
-  fetch("http://localhost:4000/api/products/" + cartItem.id)
-  .then(function(response) {
-    if (response.ok) {
-      return response.json();
-    } else if (response.id === undefined) {
-      throw new Error("This product id does not exist");
-    } else {
-      throw new Error("Network response failed");
-    }
-  })
-  .then(function(product) {
-    let totalQuantity = 0;
-    let totalPrice = 0;
-
-    if (cart.length > 0) {
-      cart.forEach(cartItem => {
-
-        totalQuantity += parseInt(cartItem.quantity);
-        totalPrice = totalPrice + (product.price * cartItem.quantity);
-      });
-    }
-    document.getElementById('totalQuantity').innerHTML = totalQuantity;
-    document.getElementById('totalPrice').innerHTML = totalPrice;
-  })
-}
-
+// cal the API to display selected products
 function fetchProduct(cartItem) {
   fetch("http://localhost:4000/api/products/" + cartItem.id)
   .then(function(response) {
@@ -180,6 +64,35 @@ function fetchProduct(cartItem) {
   })
 }
 
+// call the API to display total price
+function fetchPrices(cartItem, cart) {
+  fetch("http://localhost:4000/api/products/" + cartItem.id)
+  .then(function(response) {
+    if (response.ok) {
+      return response.json();
+    } else if (response.id === undefined) {
+      throw new Error("This product id does not exist");
+    } else {
+      throw new Error("Network response failed");
+    }
+  })
+  .then(function(product) {
+    let totalQuantity = 0;
+    let totalPrice = 0;
+
+    if (cart.length > 0) {
+      cart.forEach(cartItem => {
+
+        totalQuantity += parseInt(cartItem.quantity);
+        totalPrice = totalPrice + (product.price * cartItem.quantity);
+      });
+    }
+    document.getElementById('totalQuantity').innerHTML = totalQuantity;
+    document.getElementById('totalPrice').innerHTML = totalPrice;
+  })
+}
+
+// display selected product
 function displayCartItems(product, color, quantity) {
 
   // CREATE DIV TO DISPLAY SETTINGS
@@ -264,6 +177,118 @@ function displayCartItems(product, color, quantity) {
   article.appendChild(cartItemContent);
 
   document.getElementById('cart__items').appendChild(article);
+}
+
+// check is form is correct
+function checkOrderForm(event) {
+  event.preventDefault();
+
+  // create onctact object to persist user infos
+  let contact = {
+    firstName: document.getElementById('firstName').value,
+    lastName: document.getElementById('lastName').value,
+    address: document.getElementById('address').value,
+    city: document.getElementById('city').value,
+    email: document.getElementById('email').value
+  }
+
+  // check validity of each field of input
+  const isFormValid = (
+    checkValidity(contact.firstName)
+    &&checkValidity(contact.lastName)
+    &&checkIfFilled(contact.address)
+    &&checkValidity(contact.city)
+    &&checkEmailValidity(contact.email)
+  )
+
+  // display error message if first name is not correct
+  if (!checkValidity(contact.firstName)) {
+    let firstNameError = document.getElementById('firstNameErrorMsg')
+    let ErrorMsg = 'Veuillez remplir un prénom valide';
+    firstNameError.innerHTML = ErrorMsg;
+  }
+
+  // display error message if last name is not correct
+  if (!checkValidity(contact.lastName)) {
+    let lastNameError = document.getElementById('lastNameErrorMsg')
+    let ErrorMsg = 'Veuillez saisir un nom valide';
+    lastNameError.innerHTML = ErrorMsg;
+  }
+
+  // display error message if address is not correct
+  if (!checkIfFilled(contact.address)) {
+    let addressError = document.getElementById('addressErrorMsg')
+    let ErrorMsg = 'Veuillez saisir une adresse valide';
+    addressError.innerHTML = ErrorMsg;
+  }
+
+  // display error message if city is not correct
+  if (!checkValidity(contact.city)) {
+    let cityError = document.getElementById('cityErrorMsg')
+    let ErrorMsg = 'Veuillez saisir une ville valide';
+    cityError.innerHTML = ErrorMsg;
+  }
+
+  // display error message if email is not correct
+  if (!checkEmailValidity(contact.email)) {
+    let emailError = document.getElementById('emailErrorMsg')
+    let ErrorMsg = 'Veuillez saisir une adresse mél valide';
+    emailError.innerHTML = ErrorMsg;
+  }
+  if (isFormValid) {
+    sendOrder(contact);
+  }
+}
+
+// check that address input is not empty
+function checkIfFilled(value) {
+  return value !== "";
+}
+
+// check that email is valid
+function checkEmailValidity(value) {
+  return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value);
+}
+
+// check that first name, last name and city inputs are valid
+function checkValidity(value) {
+  return (/^[a-z ,.'-éèà]+$/i).test(value);
+}
+
+// send order to API and redirect user to confirmaiton page
+function sendOrder(contact) {
+ let cart = JSON.parse(localStorage.getItem('cart'));
+  let products = [];
+  for (item of cart) {
+    products.push(item.id);
+  }
+
+  fetch('http://localhost:4000/api/products/order', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      contact,
+      products
+    })
+  })
+  .then(function(response) {
+
+    if (response.ok) {
+      return response.json();
+    } else {
+      throw new Error("Network response failed");
+    }
+  })
+  .then((data) => {
+    console.log(data);
+    localStorage.setItem("order", JSON.stringify(data));
+    window.location.href = "confirmation.html";
+  })
+  .catch(function(err) {
+    console.error(err)
+  });
 }
 
 displayCart();
