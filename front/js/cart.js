@@ -282,13 +282,18 @@ function sendOrder(contact) {
     }
   })
   .then((data) => {
-    console.log(data);
     localStorage.setItem("order", JSON.stringify(data));
+    clearLocalStorageCart();
     window.location.href = "confirmation.html";
   })
   .catch(function(err) {
     console.error(err)
   });
+}
+
+// Clear the cart in localStorage
+function clearLocalStorageCart() {
+  localStorage.setItem("cart", "[]");
 }
 
 displayCart();
