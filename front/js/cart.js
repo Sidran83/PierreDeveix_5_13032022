@@ -37,10 +37,15 @@ function fetchProduct(cartItem) {
         for (let i = 0; i < cart.length; i++) {
           if (cart[i].id === cartItem.id && cart[i].color === dataColor) {
             cart[i].quantity = newQuantity;
-            localStorage.setItem('cart', JSON.stringify(cart));
-            console.log(cart);
+            if (cart[i].quantity < 1 || cart[i].quantity > 100) {
+              window.alert("Quantité incorrecte. Merci d'indiquer un nombre entre 1 et 100");
+              window.location.reload();
+            } else {
+              localStorage.setItem('cart', JSON.stringify(cart));
+              console.log(cart);
 
-            window.location.reload();
+              window.location.reload();
+            }
           }
         }
       })

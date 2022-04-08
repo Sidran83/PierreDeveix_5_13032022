@@ -101,13 +101,19 @@ function addProductToCart(event, selectedProduct) {
     for (i = 0; i < cart.length; i++) {
       if (cart[i].id === selectedProduct.id && cart[i].color === selectedProduct.color) {
         cart[i].quantity = (parseInt(cart[i].quantity) + parseInt(selectedProduct.quantity)).toString();
-        cart.push(cart[i]);
-        cart.splice(i, 1);
 
-        localStorage.setItem('cart', JSON.stringify(cart));
+        if (cart[i].quantity < 101) {
+          cart.push(cart[i]);
+          cart.splice(i, 1);
 
-        ifExists = true;
-        window.alert("Vous venez d'ajouter ce produit à votre panier.");
+          localStorage.setItem('cart', JSON.stringify(cart));
+
+          ifExists = true;
+          window.alert("Vous venez d'ajouter ce produit à votre panier.");
+        } else {
+          window.alert("Vous ne pouvez pas sélecitonner plus de 100 articles pour ce produit. Merci de diminuer la quantité choisie.");
+          ifExists = true;
+        }
 
       }
     }

@@ -6,7 +6,6 @@ function displayOrderConfirmation() {
   // inject orderId in the HTML
   let orderConfirmation = document.getElementById('orderId');
   orderConfirmation.innerHTML = order.orderId;
-  console.log(orderConfirmation);
 }
 
 // Clear the order in localStorage
